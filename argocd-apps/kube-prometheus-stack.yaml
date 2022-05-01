@@ -63,7 +63,13 @@ spec:
           # Enable ingress if needed
           ingress:
             enabled: true
-            annotations:
+            annotations:                                                           
+              cert-manager.io/cluster-issuer: letsencrypt-prod
+              kubernetes.io/ingress: map[class:nginx] 
+              kubernetes.io/tls-acme: "true"                                       
+              nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+              nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+          #  annotations:
           #    cert-manager.io/cluster-issuer: letsencrypt-prod
           #    ingress.kubernetes.io/ssl-redirect: "true"
           #    kubernetes.io/ingress.class: "nginx"
@@ -108,13 +114,13 @@ spec:
           #    kubernetes.io/ingress.class: "nginx"
           #    kubernetes.io/tls-acme: "true"
           #  hosts:
-          #    - prometheus.example.local.lan
+          #    - prometheus.{{ .variables.cluster_name }}.{{ .variables.domain }}
           #  paths:
           #    - /
           #  tls:
           #    - secretName: prometheus-tls
           #      hosts:
-          #        - prometheus.example.local.lan
+          #        - prometheus.{{ .variables.cluster_name }}.{{ .variables.domain }}
 
           prometheusSpec:
             serviceMonitorSelectorNilUsesHelmValues: false
@@ -123,10 +129,12 @@ spec:
             ruleSelectorNilUsesHelmValues: false
 
             externalLabels:
-              cluster_name: exampleClusterName
-              server_env: exampleEnvName
-              project: exampleProjectName
-            #externalUrl: https://prometheus.example.local.lan
+              cluster_name: {{ .variables.cluster_name }}
+              env: {{ .variables.env }}
+              organization: {{ .variables.organization }}
+              region: {{ .variables.region }}
+
+            #externalUrl: https://prometheus.{{ .variables.cluster_name }}.{{ .variables.domain }}
             #retention: 30d
 
             # Enable persistant storage if needed
@@ -152,16 +160,16 @@ spec:
           #    kubernetes.io/ingress.class: "nginx"
           #    kubernetes.io/tls-acme: "true"
           #  hosts:
-          #    - alertmanager.example.local.lan
+          #    - alertmanager.{{ .variables.cluster_name }}.{{ .variables.domain }}
           #  paths:
           #    - /
           #  tls:
           #    - secretName: alertmanager-tls
           #      hosts:
-          #        - alertmanager.example.local.lan
+          #        - alertmanager.{{ .variables.cluster_name }}.{{ .variables.domain }}
 
           #alertmanagerSpec:
-            #externalUrl: https://alertmanager.example.local.lan
+            #externalUrl: https://alertmanager.{{ .variables.cluster_name }}.{{ .variables.domain }}
             # Enable persistant storage if needed
             #storage:
             #  volumeClaimTemplate:
@@ -182,9 +190,9 @@ spec:
               receiver: blackhole
               routes:
               # Alerting disabled - enable only for prod
-              #- receiver: blackhole
-              #  group_by: [...]
-              #  repeat_interval: 120h
+              - receiver: blackhole
+                group_by: [...]
+                repeat_interval: 120h
 
               #- receiver: customer_slack
               #  group_by: [...]
@@ -255,7 +263,7 @@ spec:
             #      username: prometheus
             #      title: "cluster_name: '{{ .GroupLabels.cluster_name }}' | alert: '{{ .GroupLabels.alertname }} {{ .CommonAnnotations.message }}'"
             #      text: "{{ .CommonAnnotations.description }}"
-            #      title_link: "https://grafana.example.local.lan/{{ .CommonAnnotations.grafana_title_link }}"
+            #      title_link: "https://grafana.{{ .variables.cluster_name }}.{{ .variables.domain }}/{{ .CommonAnnotations.grafana_title_link }}"
             #      send_resolved: true
   syncPolicy:
     automated:
