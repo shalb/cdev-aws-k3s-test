@@ -70,15 +70,15 @@ spec:
           #    kubernetes.io/tls-acme: "true"
             path: /
             hosts:
-              - grafana.{{ .variables.domain }}
+              - grafana.{{ .variables.cluster_name }}.{{ .variables.domain }}
             tls:
             - hosts:
-              - grafana.{{ .variables.domain }}
+              - grafana.{{ .variables.cluster_name }}.{{ .variables.domain }}
               secretName: grafana-tls-secret
 
           grafana.ini:
             server:
-              root_url: https://grafana.{{ .variables.domain }}
+              root_url: https://grafana.{{ .variables.cluster_name }}.{{ .variables.domain }}
 
           # Enable persistant storage if needed
           #persistence:
