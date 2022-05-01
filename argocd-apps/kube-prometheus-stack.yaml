@@ -49,7 +49,7 @@ spec:
 
 
         grafana:
-          adminPassword: examplePassword
+          adminPassword: {{ .variables.grafana_password }}
 
           # Enable google auth if needed
           #env:
@@ -61,24 +61,24 @@ spec:
           #  GF_AUTH_GOOGLE_ALLOW_SIGN_UP: "true"
 
           # Enable ingress if needed
-          #ingress:
-          #  enabled: true
-          #  annotations:
+          ingress:
+            enabled: true
+            annotations:
           #    cert-manager.io/cluster-issuer: letsencrypt-prod
           #    ingress.kubernetes.io/ssl-redirect: "true"
           #    kubernetes.io/ingress.class: "nginx"
           #    kubernetes.io/tls-acme: "true"
-          #  path: /
-          #  hosts:
-          #    - grafana.example.local.lan
-          #  tls:
-          #  - hosts:
-          #    - grafana.example.local.lan
-          #    secretName: grafana-tls-secret
+            path: /
+            hosts:
+              - grafana.{{ .variables.domain }}
+            tls:
+            - hosts:
+              - grafana.{{ .variables.domain }}
+              secretName: grafana-tls-secret
 
-          #grafana.ini:
-            #server:
-              #root_url: https://grafana.example.local.lan
+          grafana.ini:
+            server:
+              root_url: https://grafana.{{ .variables.domain }}
 
           # Enable persistant storage if needed
           #persistence:
