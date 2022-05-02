@@ -197,4 +197,5 @@ units:
       kubeconfig: *getKubeconfig
       k3s_version: {{ .variables.k3s_version }}
       argocd_url: https://argocd.{{ .variables.cluster_name }}.{{ .variables.domain }}
+      grafana_url: https://grafana.{{ .variables.cluster_name }}.{{ .variables.domain }}
 
