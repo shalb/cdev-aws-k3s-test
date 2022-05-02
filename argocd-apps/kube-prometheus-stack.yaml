@@ -49,7 +49,7 @@ spec:
 
 
         grafana:
-          adminPassword: {{ .variables.grafana_password }}
+          adminPassword: {{ .project.variables.grafana_password }}
 
           # Enable google auth if needed
           #env:
